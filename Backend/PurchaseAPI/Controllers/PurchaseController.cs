@@ -39,7 +39,7 @@ namespace PurchaseAPI.Controllers
             try
             {
                 int nextInwardNo = _purchaseService.GetNextInwardNo();
-                return Ok(new { nextInwardNo });
+                return Ok(new { NextInwardNo = nextInwardNo });
             }
             catch (Exception ex)
             {

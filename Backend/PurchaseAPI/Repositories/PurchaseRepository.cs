@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Data.SqlClient;    
-
+using System.Data;
 
 
 namespace PurchaseAPI.Repositories
@@ -37,8 +37,12 @@ namespace PurchaseAPI.Repositories
 
         public int GetNextInwardNo()
         {
-            
-            throw new NotImplementedException();
+            using SqlConnection con = new SqlConnection(_connectionString);
+            using SqlCommand cmd = new SqlCommand("USP_GetNextInwardNo", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            con.Open();
+            object result = cmd.ExecuteScalar();
+            return Convert.ToInt32(result);
         }
     
     }
