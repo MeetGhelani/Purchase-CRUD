@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PurchaseAPI.Services;
+using PurchaseAPI.DTOs;
 
 
 namespace PurchaseAPI.Controllers
@@ -44,6 +45,20 @@ namespace PurchaseAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "Error occurred while fetching next inward number." });
+            }
+        }
+
+        [HttpPost("save-purchase")]
+        public IActionResult SavePurchase([FromBody] PurchaseCreateDTO purchase)
+        {
+            var result = _purchaseService.SavePurchase(purchase);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
             }
         }
     }

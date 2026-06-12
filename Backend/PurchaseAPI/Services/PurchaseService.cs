@@ -1,4 +1,5 @@
 using PurchaseAPI.Repositories;
+using PurchaseAPI.DTOs;
 
 namespace PurchaseAPI.Services
 {
@@ -19,6 +20,52 @@ namespace PurchaseAPI.Services
         public int GetNextInwardNo()
         {
             return _purchaseRepository.GetNextInwardNo();
+        }
+
+        public ApiResponseDTO SavePurchase(PurchaseCreateDTO purchase)
+        {
+            //PurchaseMaster table validations
+            if (purchase == null)
+            {
+                return new ApiResponseDTO { Success = false, Message = "Purchase data is required." };
+            }
+
+            if (string.IsNullOrWhiteSpace(purchase.PartyName))
+            {
+                return new ApiResponseDTO { Success = false, Message = "Party name is required." };
+            }
+
+            if (string.IsNullOrWhiteSpace(purchase.PurchaseBy))
+            {
+                return new ApiResponseDTO { Success = false, Message = "PurchaseBy name is required." };    
+            }
+
+            if (purchase.Items == null || !purchase.Items.Any())
+            {
+                return new ApiResponseDTO { Success = false, Message = "At least one purchase item is required." };
+            }
+
+            //PurchaseDetail table validations
+                foreach (var item in purchase.Items)
+                {
+                    if (string.IsNullOrWhiteSpace(item.ItemName))
+                    {
+                        return new ApiResponseDTO { Success = false, Message = "Item name is required." };
+                    }
+    
+                    if (item.Quantity <= 0)
+                    {
+                        return new ApiResponseDTO { Success = false, Message = $"Quantity must be greater than zero." };
+                    }
+    
+                    if (item.Rate < 0)
+                    {
+                        return new ApiResponseDTO { Success = false, Message = $"Rate must be greater than zero." };
+                    }
+                }
+
+            //call repository
+            return _purchaseRepository.SavePurchase(purchase);
         }
     }
 }
