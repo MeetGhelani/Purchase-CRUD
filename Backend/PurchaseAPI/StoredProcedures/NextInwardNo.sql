@@ -1,0 +1,1 @@
+select MAX(InwardNO) + 1 AS [NextInwardNo] FROM PurchaseMaster;
