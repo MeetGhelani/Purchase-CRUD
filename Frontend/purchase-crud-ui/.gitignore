@@ -56,4 +56,9 @@ purchase-ui/.angular/
 Thumbs.db
 .DS_Store
 
+**/Properties/launchSettings.json
+**/environment/environment.ts
+
+
+
 

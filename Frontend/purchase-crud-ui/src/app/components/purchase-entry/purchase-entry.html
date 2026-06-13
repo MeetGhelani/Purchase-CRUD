@@ -1,0 +1,225 @@
+<div class="purchase-entry-container">
+    <div class="purchase-form-title">Purchase Form</div>
+
+    <div class="purchase-form">
+
+            <div class="three-column">
+
+                <div class="main-row">
+                    <label for="inwardNo">Inward No.</label>
+                    <input type="text" 
+                    name="inwardNo" 
+                    [value]="nextInwardNo"
+                    readonly>
+                </div>
+
+                <div class="main-row">
+                    <label for="chalanNo">Chalan No.</label>
+                    <input type="number" 
+                    name="chalanNo">
+                </div>
+                <div class="main-row">
+                    <label for ="pdate">Purchase Date</label>
+                    <input type="date"
+                    name="Pdate">
+                </div>
+
+            </div>
+            
+            <div class="two-column">
+                
+                <div class="main-row">
+                <label for="partyName">Party Name</label>
+                    <select type="dropdown"
+                    name="partyName">
+                        <option value="">Select Party name</option>
+                        <option value="Party 1">Party 1</option>
+                        <option value="Party 2">Party 2</option>
+                        <option value="Party 3">Party 3</option>
+                        <option value="Party 4">Party 4</option>
+                        <option value="Party 5">Others Retailers</option>
+                    </select>
+                </div>  
+                
+                <div class="main-row">
+                    <label for="terms">Terms</label>
+                    <input type="number"
+                    name="terms">
+                </div>
+
+            </div>
+           
+            <div class="two-column">
+
+                <div class="main-row">
+
+                    <label for="remarks">Remarks</label>
+                    <input type="text"
+                    name="remarks">
+                </div>
+
+                <div class="main-row">
+
+                    <label for="purchaseBy">Purchase By</label>
+                    <select type="dropdown"
+                    name="purchaseBy">
+                        <option value="">Select Purchase By</option>
+                        <option value="Purchase By 1">Purchase By 1</option>
+                        <option value="Purchase By 2">Purchase By 2</option>
+                        <option value="Purchase By 3">Purchase By 3</option>
+                    </select>
+                </div>
+
+            </div>
+
+    </div>
+        
+    <div class="purchase-details-title">Purchase Details</div>
+
+    <div class="detail-section">
+
+        <!-- Left Side Form -->
+        <div class="detail-form">
+            <!-- Item -->
+            <div class="form-row">
+                <label>Item</label>
+                <select [(ngModel)]="detailItem.ItemName">
+                    <option value="">Select Item</option>
+                    <option value="Item 1">Item 1</option>
+                    <option value="Item 2">Item 2</option>
+                    <option value="Item 3">Item 3</option>
+                </select>
+            </div>
+
+            <!-- Sub Parts -->
+            <div class="form-row">
+                <label>Sub Parts</label>
+                <select [(ngModel)]="detailItem.SubParts">
+                    <option value="">Select Sub Part</option>
+                    <option value="Sub Part 1">Sub Part 1</option>
+                    <option value="Sub Part 2">Sub Part 2</option>
+                    <option value="Sub Part 3">Sub Part 3</option>
+                </select>
+            </div>
+
+            <!-- Qty / Rate -->
+            <div class="two-column">
+                <div class="form-row">
+                    <label>Qty</label>
+                    <input type="number"
+                    [(ngModel)]="detailItem.Quantity">
+                </div>
+
+                <div class="form-row">
+                    <label>Rate</label>
+                    <input type="number"
+                    [(ngModel)]="detailItem.Rate">
+                </div>
+            </div>
+
+            <!-- CGST / SGST -->
+            <div class="two-column">
+                <div class="form-row">
+                    <label>CGST</label>
+                    <input type="number"
+                    [(ngModel)]="detailItem.CGST">
+                </div>
+
+                <div class="form-row">
+                    <label>SGST</label>
+                    <input type="number"
+                    [(ngModel)]="detailItem.SGST">
+                </div>
+            </div>
+
+            <!-- SerTax / Amount -->
+            <div class="two-column">
+                <div class="form-row">
+                    <label>SerTax</label>
+                    <input type="number"
+                    [(ngModel)]="detailItem.SerTax">
+                </div>
+
+                <div class="form-row">
+                    <label>Amount</label>
+                    <input type="number"
+                    [(ngModel)]="detailItem.Amount"
+                    readonly>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label>Remarks</label>
+                <input type="text"
+                [(ngModel)]="detailItem.Remarks">
+            </div>
+
+            <div class="button-row">
+                <button (click)="addItem()">Save</button>
+                <button (click)="clearDetailForm()">Clear</button>
+            </div>
+                
+
+        </div>
+
+        <!-- Right Side Grid -->
+        <div class="ag-theme-alpine detail-grid">
+
+            <ag-grid-angular
+            style="width: 100%; height: 400px;"
+            [rowData]="rowData"
+            [columnDefs]="columnDefs">
+            </ag-grid-angular>
+
+        </div>
+
+    </div>
+
+    <hr style="border: 1px solid rgb(0, 75, 56);">
+
+        <div class="purchase-summary-section">
+
+            <div class="rows">
+            
+                <label for="totalAmount">Total Amount</label>
+                <input type="number"
+                name="totalAmount" 
+                class="form-control" readonly>
+
+            </div>
+                
+            <div class="rows">
+
+                <label for="discount">Discount(%)</label>
+                <input type="number"
+                name="discount"
+                class="form-control">
+            
+            </div>
+
+            <div class="rows">
+
+                <label for="extraCost">Extra Cost</label>
+                <input type="number"
+                name="extraCost"
+                class="form-control">
+            
+            </div>
+
+            <div class="rows">
+
+                <label for="netAmount">Net Amount</label>  
+                <input type="number"
+                name="netAmount"
+                class="form-control" readonly>
+            </div>
+        </div>
+
+        <div class="final-button-row">
+            <button (click)="savePurchase()">Save Purchase</button>
+            <button>Find Form</button>
+            <button>Clear Form</button>
+            <button>Delete</button>
+        </div>
+
+</div>

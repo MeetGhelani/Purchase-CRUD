@@ -30,14 +30,39 @@ namespace PurchaseAPI.Services
                 return new ApiResponseDTO { Success = false, Message = "Purchase data is required." };
             }
 
+            if (purchase.ChalanNo <= 0)
+            {
+                return new ApiResponseDTO { Success = false, Message = "Chalan number is required." };
+            }
+
+            if (purchase.PDate.Date > DateTime.Now.Date)
+            {
+                return new ApiResponseDTO { Success = false, Message = "Purchase date cannot be in the future." };
+            }
+
             if (string.IsNullOrWhiteSpace(purchase.PartyName))
             {
                 return new ApiResponseDTO { Success = false, Message = "Party name is required." };
             }
 
+            if (purchase.Terms <= 0)
+            {
+                return new ApiResponseDTO { Success = false, Message = "Terms are required." };
+            }
+
             if (string.IsNullOrWhiteSpace(purchase.PurchaseBy))
             {
                 return new ApiResponseDTO { Success = false, Message = "PurchaseBy name is required." };    
+            }
+
+            if (purchase.TotalAmount <= 0)
+            {
+                return new ApiResponseDTO { Success = false, Message = "Total amount must be greater than zero." };
+            }
+
+            if (purchase.NetAmount <= 0)
+            {
+                return new ApiResponseDTO { Success = false, Message = "Net amount must be greater than zero." };
             }
 
             if (purchase.Items == null || !purchase.Items.Any())

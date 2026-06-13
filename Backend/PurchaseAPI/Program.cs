@@ -3,7 +3,16 @@ using PurchaseAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 builder.Services.AddControllers();
 builder.Services.AddScoped<PurchaseRepository>();
 builder.Services.AddScoped<PurchaseService>();
@@ -20,6 +29,7 @@ if (app.Environment.IsDevelopment())
     app.MapSwaggerUI();
 }
 
+app.UseCors("AngularPolicy");
 app.UseHttpsRedirection();
 app.MapControllers();
 

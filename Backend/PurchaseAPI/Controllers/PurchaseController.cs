@@ -7,11 +7,11 @@ namespace PurchaseAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PurchaseController : ControllerBase
+    public class purchaseController : ControllerBase
     {
         private readonly PurchaseService _purchaseService;
 
-        public PurchaseController(PurchaseService purchaseService)
+        public purchaseController(PurchaseService purchaseService)
         {
             _purchaseService = purchaseService;
         }
