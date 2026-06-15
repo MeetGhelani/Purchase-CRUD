@@ -1,59 +1,134 @@
-# PurchaseCrudUi
+# 🛒 Purchase CRUD System
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.13.
+A Purchase Management application built using:
 
-## Development server
+- 🎨 Angular
+- ⚙️ ASP.NET Core Web API
+- 📋 AG Grid
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
+## 🏗️ Architecture
+
+```text
+Angular UI
+    ↓
+Service
+    ↓
+Controller
+    ↓
+Service Layer
+    ↓
+Repository Layer
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 📋 Purchase Flow
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```text
+Enter Purchase Details
+        ↓
+Add Item Details
+        ↓
+AG Grid Stores Items
+        ↓
+Calculate Totals
+        ↓
+Save Purchase
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
+## 🧮 Auto Calculations
+
+### Detail Amount
+
+```text
+Amount
+=
+(Quantity × Rate)
++ Applicable Taxes
 ```
 
-## Building
+### Total Amount
 
-To build the project run:
-
-```bash
-ng build
+```text
+Total Amount
+=
+Sum of All Item Amounts
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Net Amount
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
+```text
+Net Amount
+=
+Total Amount
+- Discount
++ Extra Cost
 ```
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## 📊 AG Grid Features
 
-```bash
-ng e2e
+### ➕ Add Item
+
+Add multiple purchase items before final save.
+
+### ✏️ Edit Item
+
+```text
+Double Click Row
+      ↓
+Populate Form
+      ↓
+Update Item
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### 🗑️ Delete Item
 
-## Additional Resources
+```text
+Select Row
+      ↓
+Press Delete Key
+      ↓
+Remove Item
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### 🎯 Row Highlighting
+
+Selected row is highlighted while editing.
+
+---
+
+## ✨ Key Features
+
+- ✅ Purchase Master Entry
+- ✅ Purchase Detail Entry
+- ✅ AG Grid Integration
+- ✅ Auto Amount Calculation
+- ✅ Auto Total Calculation
+- ✅ Auto Net Amount Calculation
+- ✅ Edit Existing Items
+- ✅ Delete Items
+- ✅ Save Purchase Functionality
+
+---
+
+## 🎉 Outcome
+
+```text
+Create Purchase
+      ↓
+Add Multiple Items
+      ↓
+Edit / Delete Items
+      ↓
+Calculate Totals
+      ↓
+Save Purchase
+```
+
+A clean and user-friendly Purchase Entry workflow built with Angular and ASP.NET Core. 🚀
