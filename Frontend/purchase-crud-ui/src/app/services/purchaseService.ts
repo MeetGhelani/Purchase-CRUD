@@ -25,8 +25,7 @@ export class PurchaseService {
         const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
         return this.http.post<ApiResponseModel>(
             `${this.apiUrl}/save-purchase`,
-            purchase,
-            { headers: headers }
+            purchase,{ headers: headers }
         );
     }
 

@@ -1,19 +1,19 @@
 import {PurchaseDetailModel} from "./purchase.detail.model";
 
 export interface PurchaseCreateModel {
-    InwardNo: number;
-    ChalanNo: number;
-    PDate: Date;
+    inwardNo: number;
+    chalanNo: number;
+    pDate: string;
 
-    PartyName: string;
-    Terms: number;
-    Remarks: string;
-    PurchaseBy: string;
+    partyName: string;
+    terms: number;
+    remarks: string;
+    purchaseBy: string;
 
-    TotalAmount: number;
-    DiscountPercent: number;
-    ExtraCost: number;
-    NetAmount: number;
+    totalAmount: number;
+    discountPercent: number;
+    extraCost: number;
+    netAmount: number;
 
-    Items: PurchaseDetailModel[];
+    items: PurchaseDetailModel[];
 }

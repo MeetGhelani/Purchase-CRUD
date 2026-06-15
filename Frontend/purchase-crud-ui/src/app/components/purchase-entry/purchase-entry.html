@@ -16,12 +16,16 @@
                 <div class="main-row">
                     <label for="chalanNo">Chalan No.</label>
                     <input type="number" 
-                    name="chalanNo">
+                    name="chalanNo"
+                    placeholder="Enter Chalan No."
+                    [(ngModel)]="chalanNo">
                 </div>
                 <div class="main-row">
                     <label for ="pdate">Purchase Date</label>
                     <input type="date"
-                    name="Pdate">
+                    name="pdate"
+                    [(ngModel)]="pDate"
+                    [max]="maxDate">
                 </div>
 
             </div>
@@ -31,7 +35,8 @@
                 <div class="main-row">
                 <label for="partyName">Party Name</label>
                     <select type="dropdown"
-                    name="partyName">
+                    name="partyName"
+                    [(ngModel)]="partyName">
                         <option value="">Select Party name</option>
                         <option value="Party 1">Party 1</option>
                         <option value="Party 2">Party 2</option>
@@ -44,7 +49,9 @@
                 <div class="main-row">
                     <label for="terms">Terms</label>
                     <input type="number"
-                    name="terms">
+                    name="terms"
+                    placeholder="Enter Terms"
+                    [(ngModel)]="terms">
                 </div>
 
             </div>
@@ -55,14 +62,16 @@
 
                     <label for="remarks">Remarks</label>
                     <input type="text"
-                    name="remarks">
+                    name="remarks"
+                    [(ngModel)]="remarks">
                 </div>
 
                 <div class="main-row">
 
                     <label for="purchaseBy">Purchase By</label>
                     <select type="dropdown"
-                    name="purchaseBy">
+                    name="purchaseBy"
+                    [(ngModel)]="purchaseBy">
                         <option value="">Select Purchase By</option>
                         <option value="Purchase By 1">Purchase By 1</option>
                         <option value="Purchase By 2">Purchase By 2</option>
@@ -107,13 +116,15 @@
                 <div class="form-row">
                     <label>Qty</label>
                     <input type="number"
-                    [(ngModel)]="detailItem.Quantity">
+                    [(ngModel)]="detailItem.Quantity"
+                    (input)="calculateAmount()">
                 </div>
 
                 <div class="form-row">
                     <label>Rate</label>
                     <input type="number"
-                    [(ngModel)]="detailItem.Rate">
+                    [(ngModel)]="detailItem.Rate"
+                    (input)="calculateAmount()">
                 </div>
             </div>
 
@@ -122,13 +133,15 @@
                 <div class="form-row">
                     <label>CGST</label>
                     <input type="number"
-                    [(ngModel)]="detailItem.CGST">
+                    [(ngModel)]="detailItem.CGST"
+                    (input)="calculateAmount()">
                 </div>
 
                 <div class="form-row">
                     <label>SGST</label>
                     <input type="number"
-                    [(ngModel)]="detailItem.SGST">
+                    [(ngModel)]="detailItem.SGST"
+                    (input)="calculateAmount()">
                 </div>
             </div>
 
@@ -137,7 +150,8 @@
                 <div class="form-row">
                     <label>SerTax</label>
                     <input type="number"
-                    [(ngModel)]="detailItem.SerTax">
+                    [(ngModel)]="detailItem.SerTax"
+                    (input)="calculateAmount()">
                 </div>
 
                 <div class="form-row">
@@ -155,7 +169,7 @@
             </div>
 
             <div class="button-row">
-                <button (click)="addItem()">Save</button>
+                <button (click)="addItem()">{{ isEditMode ? 'Update' : 'Save' }}</button>
                 <button (click)="clearDetailForm()">Clear</button>
             </div>
                 
@@ -168,7 +182,8 @@
             <ag-grid-angular
             style="width: 100%; height: 400px;"
             [rowData]="rowData"
-            [columnDefs]="columnDefs">
+            [columnDefs]="columnDefs"
+            (rowDoubleClicked)="onRowDoubleClick($event)">
             </ag-grid-angular>
 
         </div>
@@ -184,7 +199,8 @@
                 <label for="totalAmount">Total Amount</label>
                 <input type="number"
                 name="totalAmount" 
-                class="form-control" readonly>
+                [(ngModel)]="totalAmount"
+                readonly>
 
             </div>
                 
@@ -193,7 +209,8 @@
                 <label for="discount">Discount(%)</label>
                 <input type="number"
                 name="discount"
-                class="form-control">
+                [(ngModel)]="discountPercent"
+                (input)="calculateNetAmount()">
             
             </div>
 
@@ -202,7 +219,8 @@
                 <label for="extraCost">Extra Cost</label>
                 <input type="number"
                 name="extraCost"
-                class="form-control">
+                [(ngModel)]="extraCost"
+                (input)="calculateNetAmount()">
             
             </div>
 
@@ -211,7 +229,8 @@
                 <label for="netAmount">Net Amount</label>  
                 <input type="number"
                 name="netAmount"
-                class="form-control" readonly>
+                [(ngModel)]="netAmount"
+                readonly>
             </div>
         </div>
 

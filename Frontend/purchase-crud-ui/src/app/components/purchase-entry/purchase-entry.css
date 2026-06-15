@@ -94,7 +94,7 @@
 .detail-section {
     display: grid;
     grid-template-columns: 380px 1fr;
-    gap: 16px;
+    gap: 20px;
     padding-top: 0px;
 }
 
@@ -130,13 +130,13 @@
     border: 1px solid #b6b6b6;
     border-radius: 4px;
     color: rgb(0, 75, 56);
-
+    font-weight: bold;
+    width: 100%;
 }
 
 .detail-form input[readonly] {
     background: #b9d1c9;
     color: rgb(0, 75, 56);
-
 }
 
 .form-row {

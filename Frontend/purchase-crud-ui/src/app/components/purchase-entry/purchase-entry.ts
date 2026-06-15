@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { PurchaseService } from '../../services/purchaseService';
 import {
   ColDef,
@@ -14,6 +14,9 @@ import { PurchaseDetailModel } from '../../models/purchase.detail.model';
 
 import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel
 
+import { ChangeDetectorRef } from '@angular/core';
+import { PurchaseCreateModel } from '../../models/purchase.create.model';
+
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -26,14 +29,10 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 })
 export class PurchaseEntry {
 
-  private readonly STORAGE_KEY = 'purchase-draft';
-
   nextInwardNo: number = 0;
-  purchaseItems: PurchaseDetailModel[] = [];
-  rowData: PurchaseDetailModel[] = [];
-
   chalanNo: number = 0;
-  pDate: Date = new Date();
+  pDate: string = new Date().toISOString().split('T')[0];
+  maxDate: string = new Date().toISOString().split('T')[0];
   partyName: string = '';
   terms: number = 0;
   remarks: string = '';
@@ -43,6 +42,9 @@ export class PurchaseEntry {
   discountPercent: number = 0;
   extraCost: number = 0;
   netAmount: number = 0;
+  purchaseItems: PurchaseDetailModel[] = [];
+  rowData: PurchaseDetailModel[] = [];
+
   detailItem: PurchaseDetailModel = {
   ItemName: '',
   SubParts: '',
@@ -55,94 +57,90 @@ export class PurchaseEntry {
   Remarks: ''
 };
 
+  isEditMode: boolean = false;
+  editingRowIndex: number = -1;
+
+
   constructor(
     private purchaseService: PurchaseService,
-  ){}
+    private cdRef: ChangeDetectorRef
+  ){  }
 
   ngOnInit(): void
   {
-    console.log('Fetching next inward number...');
-    this.purchaseService
-        .GetNextInwardNo()
-        .subscribe({
-          next: (response) => {
-            console.log('Next inward number:', response.nextInwardNo);
-            this.nextInwardNo = response.nextInwardNo;
-          },
-          error: (error) => {
-            console.error('Error fetching next inward number:', error);
-          }
-        });
-
-      this.loadDraft();
+    this.loadNextInwardNo();
   }
 
-saveDraft(): void
-{
-  const draft =
+    columnDefs: ColDef[] = [
+      { field: 'ItemName', headerName: 'Item Name' },
+      { field: 'SubParts', headerName: 'Sub Parts' },
+      { field: 'Quantity', headerName: 'Quantity' },
+      { field: 'Rate', headerName: 'Rate' },
+      { field: 'CGST', headerName: 'CGST(%)' },
+      { field: 'SGST', headerName: 'SGST(%)' },
+      {field: 'SerTax', headerName: 'SerTax(%)' },
+      { field: 'Amount', headerName: 'Amount' },
+      { field: 'Remarks', headerName: 'Remarks' },  
+    ];
+
+  calculateAmount(): void
   {
-    master:
-    {
-      inwardNo: this.nextInwardNo,
-      chalanNo: this.chalanNo,
-      pDate: this.pDate,
-      partyName: this.partyName,
-      terms: this.terms,
-      remarks: this.remarks,
-      purchaseBy: this.purchaseBy
-    },
+      const qty = Number(this.detailItem.Quantity) || 0;
 
-    items: this.purchaseItems,
+      const rate = Number(this.detailItem.Rate) || 0;
 
-    totals:
-    {
-      totalAmount: this.totalAmount,
-      discountPercent: this.discountPercent,
-      extraCost: this.extraCost,
-      netAmount: this.netAmount
-    }
-  };
+      const cgst = Number(this.detailItem.CGST) || 0;
 
-  localStorage.setItem(
-    'purchase-draft',
-    JSON.stringify(draft)
-  );
-}
+      const sgst = Number(this.detailItem.SGST) || 0;
 
-loadDraft(): void
-{
-  const draftJson =
-    localStorage.getItem('purchase-draft');
+      const serTax = Number(this.detailItem.SerTax) || 0;
 
-  if (!draftJson)
-  {
-    return;
+      const baseAmount = qty * rate;
+
+      const taxPercent =
+          cgst + sgst + serTax;
+
+      const taxAmount =
+          (baseAmount * taxPercent) / 100;
+
+      this.detailItem.Amount =
+          Number((baseAmount + taxAmount).toFixed(3));
   }
 
-  const draft = JSON.parse(draftJson);
+  calculateTotalAmount(): void
+  {
+      this.totalAmount =
+          this.purchaseItems.reduce(
+              (sum, item) => sum + item.Amount,
+              0
+          );
 
-  // Master
+      this.totalAmount =
+          Number(this.totalAmount.toFixed(3));
 
-  this.nextInwardNo = draft.master.inwardNo;
-  this.chalanNo = draft.master.chalanNo;
-  this.pDate = new Date(draft.master.pDate);
-  this.partyName = draft.master.partyName;
-  this.terms = draft.master.terms;
-  this.remarks = draft.master.remarks;
-  this.purchaseBy = draft.master.purchaseBy;
+      this.calculateNetAmount();
+  }
 
-  // Details
+  calculateNetAmount(): void
+  {
+      const discount =
+          Number(this.discountPercent) || 0;
 
-  this.purchaseItems = draft.items || [];
-  this.rowData = [...this.purchaseItems];
+      const extra =
+          Number(this.extraCost) || 0;
 
-  // Totals
+      const discountAmount =
+          (this.totalAmount * discount) / 100;
 
-  this.totalAmount = draft.totals.totalAmount;
-  this.discountPercent = draft.totals.discountPercent;
-  this.extraCost = draft.totals.extraCost;
-  this.netAmount = draft.totals.netAmount;
-}
+      this.netAmount =
+          Number(
+              (
+                  this.totalAmount
+                  - discountAmount
+                  + extra
+              ).toFixed(3)
+          );
+  }
 
   addItem(): void
   {
@@ -151,14 +149,85 @@ loadDraft(): void
       ...this.detailItem
     };
 
-    this.purchaseItems.push(itemToAdd);
+    if (!this.detailItem.ItemName)
+    {
+        alert('Please select Item');
+        return;
+    }
 
-    this.saveDraft();
+    if (this.detailItem.Quantity <= 0)
+    {
+        alert('Quantity must be greater than zero');
+        return;
+    }
+
+    if (this.detailItem.Rate <= 0)
+    {
+        alert('Rate must be greater than zero');
+        return;
+    }
+
+
+    if (this.isEditMode)
+    {
+        this.purchaseItems[
+            this.editingRowIndex
+        ] = itemToAdd;
+
+        this.isEditMode = false;
+
+        this.editingRowIndex = -1;
+    }
+    else
+    {
+        this.purchaseItems.push(itemToAdd);
+    }
+
+    this.calculateTotalAmount();
 
     this.rowData = [...this.purchaseItems];
 
     this.clearDetailForm();
   }
+
+  onRowDoubleClick(event: any): void
+  {
+      this.detailItem =
+      {
+          ...event.data
+      };
+
+      this.editingRowIndex =
+          event.rowIndex;
+
+      this.isEditMode = true;
+  }
+
+  @HostListener('document:keydown.delete')
+  onDeleteKeyPressed(): void
+  {
+      this.deleteSelectedRow();
+  }
+
+  deleteSelectedRow(): void
+  {
+      if (this.editingRowIndex < 0)
+      {
+          alert('Please select a row to delete');
+          return;
+      }
+
+      this.purchaseItems.splice(
+          this.editingRowIndex,
+          1
+      );
+
+      this.rowData = [...this.purchaseItems];
+
+      this.calculateTotalAmount();
+
+      this.clearDetailForm();
+  } 
 
   clearDetailForm(): void
   {
@@ -173,21 +242,10 @@ loadDraft(): void
       Amount: 0,
       Remarks: ''
     };
+
+      this.isEditMode = false;
+      this.editingRowIndex = -1;
   }
-
-
-  columnDefs: ColDef[] = [
-    { field: 'ItemName', headerName: 'Item Name' },
-    { field: 'SubParts', headerName: 'Sub Parts' },
-    { field: 'Quantity', headerName: 'Quantity' },
-    { field: 'Rate', headerName: 'Rate' },
-    { field: 'CGST', headerName: 'CGST(%)' },
-    { field: 'SGST', headerName: 'SGST(%)' },
-    {field: 'SerTax', headerName: 'SerTax(%)' },
-    { field: 'Amount', headerName: 'Amount' },
-    { field: 'Remarks', headerName: 'Remarks' },  
-  ];
-
 
   savePurchase(): void
     {
@@ -249,7 +307,7 @@ loadDraft(): void
         // Create Payload
         // ========================================
 
-        const payload =
+        const payload : PurchaseCreateModel =
         {
             inwardNo: this.nextInwardNo,
 
@@ -276,53 +334,52 @@ loadDraft(): void
             items: this.purchaseItems
         };
 
-        console.log('Payload Being Sent');
-        console.log(payload);
-
         // ========================================
         // API Call
         // ========================================
 
-       /* this.purchaseService
-            .SavePurchase(payload)
-            .subscribe({
+        this.purchaseService
+          .SavePurchase(payload)
+          .subscribe({
 
-                next: (response) =>
-                {
-                    console.log(response);
+              next: (response) =>
+              {
+                  if (response.success)
+                  {
+                      alert(response.message);
 
-                    if (response.success)
-                    {
-                        alert(response.message);
+                      this.resetPurchaseScreen();
 
-                        // Clear Draft
-                        localStorage.removeItem('purchase-draft');
+                      this.loadNextInwardNo();
 
-                        // Reset Screen
-                        this.resetPurchaseScreen();
+                      this.cdRef.detectChanges();
+                  }
+                  else
+                  {
+                      alert(response.message);
+                  }
+              },
 
-                        // Get New Inward No
-                        this.loadNextInwardNo();
-                    }
-                    else
-                    {
-                        alert(response.message);
-                    }
-                },
+              error: (error) =>
+              {
+                  console.error('Save Error:', error);
 
-                error: (error) =>
-                {
-                    console.error(error);
-
-                    alert('Error while saving purchase');
-                }
-            });*/
+                  if (error.error?.message)
+                  {
+                      alert(error.error.message);
+                  }
+                  else
+                  {
+                      alert('Error while saving purchase');
+                  }
+              }
+          });
     }
 
     resetPurchaseScreen(): void
     {
         this.chalanNo = 0;
-        this.pDate = new Date();
+        this.pDate = new Date().toISOString().split('T')[0];
         this.partyName = '';
         this.terms = 0;
         this.remarks = '';
@@ -339,8 +396,27 @@ loadDraft(): void
         this.clearDetailForm();
     }
 
-    loadNextInwardNo(): void{
+    loadNextInwardNo(): void
+    {
+        this.purchaseService
+            .GetNextInwardNo()
+            .subscribe({
 
+                next: (response) =>
+                {
+                    this.nextInwardNo =
+                        response.nextInwardNo;
+                    this.cdRef.detectChanges();
+                },
+
+                error: (error) =>
+                {
+                    console.error(
+                        'Error fetching inward number',
+                        error
+                    );
+                }
+            });
     }
 
 }
