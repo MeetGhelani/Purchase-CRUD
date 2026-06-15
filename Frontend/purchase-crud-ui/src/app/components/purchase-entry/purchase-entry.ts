@@ -370,7 +370,7 @@ export class PurchaseEntry {
                   }
                   else
                   {
-                      alert('Error while saving purchase');
+                      alert('Error while saving purchase, Please check the input data and try again.');
                   }
               }
           });
