@@ -3,11 +3,8 @@ import { PurchaseService } from '../../services/purchaseService';
 
 import {
   ColDef,
-  GridApi,
-  GridReadyEvent,
   ModuleRegistry,
   AllCommunityModule,
-  SortChangedEvent
 } from 'ag-grid-community';
 
 import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
@@ -18,13 +15,16 @@ import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel
 import { ChangeDetectorRef } from '@angular/core';
 import { PurchaseCreateModel } from '../../models/purchase.create.model';
 
+import{FindDialogComponent} from '../../shared/components/find-dialog/find-dialog';
+
+
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-purchase-entry',
   standalone: true,
-  imports: [AgGridAngular, FormsModule],
+  imports: [AgGridAngular, FormsModule, FindDialogComponent],
   templateUrl: './purchase-entry.html',
   styleUrl: './purchase-entry.css',
 })
@@ -61,6 +61,9 @@ export class PurchaseEntry {
   isEditMode: boolean = false;
   editingRowIndex: number = -1;
 
+  showFindDialog: boolean = false;
+  isEditPurchaseMode: boolean = false;
+
 
   constructor(
     private purchaseService: PurchaseService,
@@ -73,16 +76,63 @@ export class PurchaseEntry {
   }
 
     columnDefs: ColDef[] = [
-      { field: 'ItemName', headerName: 'Item Name' },
-      { field: 'SubParts', headerName: 'Sub Parts' },
-      { field: 'Quantity', headerName: 'Quantity' },
-      { field: 'Rate', headerName: 'Rate' },
-      { field: 'CGST', headerName: 'CGST(%)' },
-      { field: 'SGST', headerName: 'SGST(%)' },
-      {field: 'SerTax', headerName: 'SerTax(%)' },
-      { field: 'Amount', headerName: 'Amount' },
-      { field: 'Remarks', headerName: 'Remarks' },  
+      { field: 'ItemName', headerName: 'Item Name', width: 200 },
+      { field: 'SubParts', headerName: 'Sub Parts',width: 150 },
+      { field: 'Quantity', headerName: 'Quantity' ,width: 100},
+      { field: 'Rate', headerName: 'Rate', width: 100 },
+      { field: 'CGST', headerName: 'CGST(%)' , width: 100},
+      { field: 'SGST', headerName: 'SGST(%)' , width: 100},
+      {field: 'SerTax', headerName: 'SerTax(%)' , width: 100},
+      { field: 'Amount', headerName: 'Amount' , width: 120},
+      { field: 'Remarks', headerName: 'Remarks' , width: 200},  
     ];
+
+    openFindDialog(): void
+    {
+        this.showFindDialog = true;
+    }
+
+    closeFindDialog(): void
+    {
+        this.showFindDialog = false;
+    }
+
+    allowThreeDecimals(event: KeyboardEvent): void
+    {
+
+        const input = event.target as HTMLInputElement;
+
+        const allowedKeys = [
+            'Backspace',
+            'Delete',
+            'ArrowLeft',
+            'ArrowRight',
+            'Tab'
+        ];
+
+        if (allowedKeys.includes(event.key))
+        {
+            return;
+        }
+
+        const currentValue = input.value;
+
+        const cursorPosition =
+            input.selectionStart ?? currentValue.length;
+
+        const newValue =
+            currentValue.slice(0, cursorPosition)
+            + event.key
+            + currentValue.slice(cursorPosition);
+
+        const regex = /^\d*\.?\d{0,3}$/;
+
+        if (!regex.test(newValue))
+        {
+            event.preventDefault();
+        }
+
+    }
 
   calculateAmount(): void
   {
@@ -191,18 +241,112 @@ export class PurchaseEntry {
     this.clearDetailForm();
   }
 
-  onRowDoubleClick(event: any): void
-  {
-      this.detailItem =
-      {
-          ...event.data
-      };
+    onRowDoubleClick(event: any): void
+    {
+        this.detailItem =
+        {
+            ...event.data
+        };
 
-      this.editingRowIndex =
-          event.rowIndex;
+        this.editingRowIndex =
+            event.rowIndex;
 
-      this.isEditMode = true;
-  }
+        this.isEditMode = true;
+    }
+
+    onPurchaseSelected(
+        row: any): void
+    {
+        this.purchaseService
+            .GetPurchaseByInwardNo(
+                row.InwardNo)
+            .subscribe({
+
+                next: (response) =>
+                {
+
+                    this.populatePurchase(
+                        response);
+
+                    this.cdRef.detectChanges();
+                },
+
+                error: (error) =>
+                {
+                    console.error(error);
+                }
+            });
+    }
+
+    populatePurchase(
+        purchase: any): void
+    {
+        // Master
+
+        this.nextInwardNo =
+            purchase.purchaseMaster.inwardNo;
+
+        this.chalanNo =
+            purchase.purchaseMaster.chalanNo;
+
+        this.pDate =
+            new Date(
+                purchase.purchaseMaster.pDate
+            ).toISOString().split('T')[0];
+
+        this.partyName =
+            purchase.purchaseMaster.partyName;
+
+        this.terms =
+            purchase.purchaseMaster.terms;
+
+        this.remarks =
+            purchase.purchaseMaster.remarks;
+
+        this.purchaseBy =
+            purchase.purchaseMaster.purchaseBy;
+
+        this.totalAmount =
+            purchase.purchaseMaster.totalAmount;
+
+        this.discountPercent =
+            purchase.purchaseMaster.discountPercent;
+
+        this.extraCost =
+            purchase.purchaseMaster.extraCost;
+
+        this.netAmount =
+            purchase.purchaseMaster.netAmount;
+
+     
+            this.purchaseItems =
+        purchase.purchaseDetails.map(
+            (x: any) => ({
+                ItemName: x.itemName,
+                SubParts: x.subParts,
+                Quantity: x.quantity,
+                Rate: x.rate,
+                CGST: x.cgst,
+                SGST: x.sgst,
+                SerTax: x.serTax,
+                Amount: x.amount,
+                Remarks: x.remarks
+            })
+        );
+
+        // Details
+
+        this.rowData =
+            [...this.purchaseItems];
+
+        // Edit Mode
+
+        this.isEditPurchaseMode =
+            true;
+
+        this.showFindDialog =
+            false;
+    }
 
   @HostListener('document:keydown.delete')
   onDeleteKeyPressed(): void
@@ -248,8 +392,8 @@ export class PurchaseEntry {
       this.editingRowIndex = -1;
   }
 
-  savePurchase(): void
-    {
+  createPurchase(): void
+  {
         // ========================================
         // Master Validations
         // ========================================
@@ -377,6 +521,128 @@ export class PurchaseEntry {
           });
     }
 
+  savePurchase(): void
+    {
+        if(this.isEditPurchaseMode)
+        {
+            this.updatePurchase();
+
+            return;
+        }
+
+        this.createPurchase();
+    }
+
+    updatePurchase(): void
+    {
+         if (this.nextInwardNo <= 0)
+        {
+            alert('Invalid Inward Number');
+            return;
+        }
+
+        if (this.chalanNo <= 0)
+        {
+            alert('Please enter Chalan No');
+            return;
+        }
+
+        if (!this.pDate)
+        {
+            alert('Please select Purchase Date');
+            return;
+        }
+
+        if (this.terms <= 0)
+        {
+            alert('Terms cannot be zero or negative');
+            return;
+        }
+
+        // ========================================
+        // Detail Validation
+        // ========================================
+
+        if (this.purchaseItems.length === 0)
+        {
+            alert('Please add at least one item');
+            return;
+        }
+
+        // ========================================
+        // Totals Validation
+        // ========================================
+
+        if (this.totalAmount <= 0)
+        {
+            alert('Total Amount must be greater than zero');
+            return;
+        }
+
+        if (this.netAmount <= 0)
+        {
+            alert('Net Amount must be greater than zero');
+            return;
+        }
+
+        // ========================================
+        // Create Payload
+        // ========================================
+
+        const payload =
+        {
+            inwardNo: this.nextInwardNo,
+
+            chalanNo: this.chalanNo,
+
+            pDate: this.pDate,
+
+            partyName: this.partyName,
+
+            terms: this.terms,
+
+            remarks: this.remarks,
+
+            purchaseBy: this.purchaseBy,
+
+            totalAmount: this.totalAmount,
+
+            discountPercent: this.discountPercent,
+
+            extraCost: this.extraCost,
+
+            netAmount: this.netAmount,
+
+            items: this.purchaseItems
+        };
+
+        console.log('UPDATE PAYLOAD');
+        console.log(payload);
+
+        this.purchaseService
+            .UpdatePurchase(payload)
+            .subscribe({
+
+                next: (response) =>
+                {
+                    alert(response.message);
+
+                    this.resetPurchaseScreen();
+
+                    this.loadNextInwardNo();
+
+                    this.isEditPurchaseMode =
+                        false;
+                },
+
+                error: (error) =>
+                {
+                    console.error(error);
+                }
+            });
+
+    }
+
     resetPurchaseScreen(): void
     {
         this.chalanNo = 0;
@@ -419,5 +685,6 @@ export class PurchaseEntry {
                 }
             });
     }
+
 
 }

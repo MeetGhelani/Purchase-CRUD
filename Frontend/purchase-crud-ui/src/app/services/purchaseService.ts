@@ -11,7 +11,7 @@ import { NextInwardModel } from '../models/nextinward.model';
 })
 export class PurchaseService {
     
-    private apiUrl = environment.apiBaseUrl;
+    private apiUrl = environment.apiBaseUrlpurchase;
     constructor(private http: HttpClient) {
 
     }
@@ -26,6 +26,22 @@ export class PurchaseService {
         return this.http.post<ApiResponseModel>(
             `${this.apiUrl}/save-purchase`,
             purchase,{ headers: headers }
+        );
+    }
+
+    GetPurchaseByInwardNo(inwardNo: number)
+    {
+        return this.http.get(
+            `${this.apiUrl}/get-by-inwardno/${inwardNo}`
+        );
+    }
+
+    UpdatePurchase(
+        purchase: any)
+    {
+        return this.http.put<any>(
+            `${this.apiUrl}/update-purchase`,
+            purchase
         );
     }
 

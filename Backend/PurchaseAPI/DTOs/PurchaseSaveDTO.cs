@@ -1,8 +1,6 @@
-using PurchaseAPI.DTOs;
-
 namespace PurchaseAPI.DTOs
 {
-    public class PurchaseCreateDTO
+    public class PurchaseSaveDTO
     {
         public int InwardNo { get; set; }
 

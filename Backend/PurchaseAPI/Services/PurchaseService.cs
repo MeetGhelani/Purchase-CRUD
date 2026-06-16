@@ -1,5 +1,6 @@
 using PurchaseAPI.Repositories;
 using PurchaseAPI.DTOs;
+using PurchaseAPI.Models;
 
 namespace PurchaseAPI.Services
 {
@@ -22,7 +23,7 @@ namespace PurchaseAPI.Services
             return _purchaseRepository.GetNextInwardNo();
         }
 
-        public ApiResponseDTO SavePurchase(PurchaseCreateDTO purchase)
+        public ApiResponseDTO SavePurchase(PurchaseSaveDTO purchase)
         {
             //PurchaseMaster table validations
             if (purchase == null)
@@ -91,6 +92,18 @@ namespace PurchaseAPI.Services
 
             //call repository
             return _purchaseRepository.SavePurchase(purchase);
+        }
+
+        public PurchaseEditModel GetPurchaseByInwardNo(int inwardNo)
+        {
+            return _purchaseRepository.GetPurchaseByInwardNo(inwardNo);
+        }
+
+        public ApiResponseDTO UpdatePurchase(PurchaseSaveDTO purchase)
+        {
+            // Similar validations as SavePurchase can be added here
+
+            return _purchaseRepository.UpdatePurchase(purchase);
         }
     }
 }

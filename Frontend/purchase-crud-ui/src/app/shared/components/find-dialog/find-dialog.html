@@ -1,0 +1,46 @@
+<div class="overlay">
+
+    <div class="dialog">
+
+        <div class="dialog-header">
+
+        <span class="dialog-title">{{ title }}</span>
+
+            <button 
+                class="close-button"
+                type="button"
+                (click)="close()">
+                X
+            </button>
+
+        </div>
+
+        <div class="dialog-body">
+
+            <div class="ag-grid-alpine data-grid">
+
+                <ag-grid-angular
+
+                    style="width:100%; height:500px; margin-top: 20px;"
+
+                    [rowData]="rowData"
+
+                    [columnDefs]="columnDefs"
+
+                    [defaultColDef]="defaultColDef"
+
+                    [pagination]="true"
+
+                    (filterChanged)="onFilterChanged($event)"
+
+                    (rowDoubleClicked)="onRowDoubleClick($event)">
+
+                </ag-grid-angular>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

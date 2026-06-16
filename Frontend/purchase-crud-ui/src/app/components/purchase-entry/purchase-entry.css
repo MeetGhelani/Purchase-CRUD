@@ -200,8 +200,7 @@
   --ag-header-height: 50px;
 
   --ag-cell-horizontal-padding: 10px;
-  --ag-border-color: #d7e3dc;
-    --ag-header-cell-text: 20px;
+  --ag-border-color: #e2d7e3;
 
 }
 
@@ -260,6 +259,7 @@ input::-webkit-inner-spin-button {
 /* Target Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 :host ::ng-deep .ag-body-vertical-scroll-viewport::-webkit-scrollbar,

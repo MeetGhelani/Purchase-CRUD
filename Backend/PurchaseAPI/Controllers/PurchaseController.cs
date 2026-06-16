@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PurchaseAPI.Services;
 using PurchaseAPI.DTOs;
+using PurchaseAPI.Models;
 
 
 namespace PurchaseAPI.Controllers
@@ -49,7 +50,7 @@ namespace PurchaseAPI.Controllers
         }
 
         [HttpPost("save-purchase")]
-        public IActionResult SavePurchase([FromBody] PurchaseCreateDTO purchase)
+        public IActionResult SavePurchase([FromBody] PurchaseSaveDTO purchase)
         {
             var result = _purchaseService.SavePurchase(purchase);
             if (result.Success)
@@ -61,5 +62,31 @@ namespace PurchaseAPI.Controllers
                 return BadRequest(result);
             }
         }
+
+        [HttpGet("get-by-inwardno/{inwardNo}")]
+        public IActionResult GetPurchase(int inwardNo)
+        {
+            var result = _purchaseService.GetPurchaseByInwardNo(inwardNo);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return NotFound(new { message = $"Purchase with InwardNo {inwardNo} not found." });
+            }
+        }
+
+       [HttpPut("update-purchase")]
+        public IActionResult UpdatePurchase(
+            PurchaseSaveDTO purchase)
+        {
+            var result =
+                _purchaseService
+                    .UpdatePurchase(purchase);
+
+            return Ok(result);
+        }
+
     }
 }

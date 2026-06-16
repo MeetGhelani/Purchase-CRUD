@@ -16,6 +16,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddScoped<PurchaseRepository>();
 builder.Services.AddScoped<PurchaseService>();
+builder.Services.AddScoped<LookupRepository>();
+builder.Services.AddScoped<LookupService>();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

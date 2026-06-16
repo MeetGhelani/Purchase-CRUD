@@ -117,14 +117,16 @@
                     <label>Qty</label>
                     <input type="number"
                     [(ngModel)]="detailItem.Quantity"
-                    (input)="calculateAmount()">
+                    (input)="calculateAmount()"
+                    (keypress)="allowThreeDecimals($event)">
                 </div>
 
                 <div class="form-row">
                     <label>Rate</label>
                     <input type="number"
                     [(ngModel)]="detailItem.Rate"
-                    (input)="calculateAmount()">
+                    (input)="calculateAmount()"
+                    (keypress)="allowThreeDecimals($event)">
                 </div>
             </div>
 
@@ -134,14 +136,17 @@
                     <label>CGST</label>
                     <input type="number"
                     [(ngModel)]="detailItem.CGST"
-                    (input)="calculateAmount()">
+                    (input)="calculateAmount()"
+                    (keypress)="allowThreeDecimals($event)">
+                
                 </div>
 
                 <div class="form-row">
                     <label>SGST</label>
                     <input type="number"
                     [(ngModel)]="detailItem.SGST"
-                    (input)="calculateAmount()">
+                    (input)="calculateAmount()"
+                    (keypress)="allowThreeDecimals($event)">
                 </div>
             </div>
 
@@ -151,7 +156,8 @@
                     <label>SerTax</label>
                     <input type="number"
                     [(ngModel)]="detailItem.SerTax"
-                    (input)="calculateAmount()">
+                    (input)="calculateAmount()"
+                    (keypress)="allowThreeDecimals($event)">
                 </div>
 
                 <div class="form-row">
@@ -235,8 +241,26 @@
         </div>
 
         <div class="final-button-row">
-            <button (click)="savePurchase()">Save Purchase</button>
-            <button>Find Form</button>
+            <button (click)="savePurchase()">
+                            {{ isEditPurchaseMode
+                                ? 'Update'
+                                : 'Save Purchase' }}
+            </button>
+            <button (click)="openFindDialog()">Find Form</button>
+            @if(showFindDialog)
+            {
+                <app-find-dialog
+
+                    title="Find Item"
+
+                    [tableName]="'PurchaseMaster'"
+
+                    (rowSelected)="onPurchaseSelected($event)"
+
+                    (dialogClosed)="closeFindDialog()">
+
+                </app-find-dialog>
+            }
             <button>Clear Form</button>
             <button>Delete</button>
         </div>
