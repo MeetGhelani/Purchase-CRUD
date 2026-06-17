@@ -36,12 +36,18 @@ export class PurchaseService {
         );
     }
 
-    UpdatePurchase(
-        purchase: any)
+    UpdatePurchase(purchase: any)
     {
         return this.http.put<any>(
             `${this.apiUrl}/update-purchase`,
             purchase
+        );
+    }
+
+    DeletePurchase(inwardNo: number)
+    {
+        return this.http.delete<any>(
+            `${this.apiUrl}/delete-purchase/${inwardNo}`
         );
     }
 

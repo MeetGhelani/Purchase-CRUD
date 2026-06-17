@@ -392,6 +392,18 @@ export class PurchaseEntry {
       this.editingRowIndex = -1;
   }
 
+    savePurchase(): void
+    {
+        if(this.isEditPurchaseMode)
+        {
+            this.updatePurchase();
+
+            return;
+        }
+
+        this.createPurchase();
+    }
+
   createPurchase(): void
   {
         // ========================================
@@ -519,18 +531,6 @@ export class PurchaseEntry {
                   }
               }
           });
-    }
-
-  savePurchase(): void
-    {
-        if(this.isEditPurchaseMode)
-        {
-            this.updatePurchase();
-
-            return;
-        }
-
-        this.createPurchase();
     }
 
     updatePurchase(): void
@@ -681,6 +681,57 @@ export class PurchaseEntry {
                     console.error(
                         'Error fetching inward number',
                         error
+                    );
+                }
+            });
+    }
+
+    deletePurchase(): void
+    {
+        if (!this.isEditPurchaseMode)
+        {
+            return;
+        }
+
+        const confirmed =
+            confirm(
+                `Do you want to delete Purchase Entry with Inward No. "${this.nextInwardNo}"?`
+            );
+
+        if (!confirmed)
+        {
+            return;
+        }
+
+        this.purchaseService
+            .DeletePurchase(
+                this.nextInwardNo
+            )
+            .subscribe({
+
+                next: (response) =>
+                {
+
+                    if (response.success)
+                    {
+
+                        alert(response.message);
+
+                        this.resetPurchaseScreen();
+
+                        this.loadNextInwardNo();
+
+                        this.isEditPurchaseMode =
+                            false;
+                    }
+                },
+
+                error: (error) =>
+                {
+                    console.error(error);
+
+                    alert(
+                        'Error while deleting purchase'
                     );
                 }
             });

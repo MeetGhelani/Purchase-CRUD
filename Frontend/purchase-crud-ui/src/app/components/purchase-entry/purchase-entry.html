@@ -251,7 +251,7 @@
             {
                 <app-find-dialog
 
-                    title="Find Item"
+                    title="Find Purchase Entry"
 
                     [tableName]="'PurchaseMaster'"
 
@@ -261,8 +261,12 @@
 
                 </app-find-dialog>
             }
-            <button>Clear Form</button>
-            <button>Delete</button>
+            <button (click)="resetPurchaseScreen()">Clear Form</button>
+            <button (click)="deletePurchase()"
+            [disabled]="!isEditPurchaseMode"
+            class="btn-danger"
+            >Delete
+            </button>
         </div>
 
 </div>

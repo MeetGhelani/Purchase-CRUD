@@ -105,5 +105,10 @@ namespace PurchaseAPI.Services
 
             return _purchaseRepository.UpdatePurchase(purchase);
         }
+
+        public ApiResponseDTO DeletePurchase(int inwardNo)
+        {
+            return _purchaseRepository.DeletePurchase(inwardNo);
+        }   
     }
 }

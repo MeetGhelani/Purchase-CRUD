@@ -88,5 +88,13 @@ namespace PurchaseAPI.Controllers
             return Ok(result);
         }
 
+        [HttpDelete("delete-purchase/{inwardNo}")]
+        public IActionResult DeletePurchase(int inwardNo)
+        {
+            ApiResponseDTO response = _purchaseService.DeletePurchase(inwardNo);
+
+            return Ok(response);
+        }
+
     }
 }

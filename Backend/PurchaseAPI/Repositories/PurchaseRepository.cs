@@ -302,6 +302,34 @@ namespace PurchaseAPI.Repositories
 
         }
 
+        public ApiResponseDTO DeletePurchase(int inwardNo)
+        {
+            try
+            {
+                using SqlConnection con = new SqlConnection(_connectionString);
+                using SqlCommand cmd = new SqlCommand("USP_DeletePurchase", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@InwardNo", inwardNo);
+
+                con.Open();
+
+                using SqlDataReader cmdReader = cmd.ExecuteReader();
+                if (cmdReader.Read())
+                {
+                    bool success = cmdReader.GetBoolean(0);
+                    string message = cmdReader.GetString(1);
+                    return new ApiResponseDTO { Success = success, Message = message };
+                }
+                return new ApiResponseDTO { Success = false, Message = "Failed to delete purchase." };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting purchase: {ex.Message}");
+                return new ApiResponseDTO { Success = false, Message = $"Error: {ex.Message}" };
+            }
+        }
+
     }
 
 }
