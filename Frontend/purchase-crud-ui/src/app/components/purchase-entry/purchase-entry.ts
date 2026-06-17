@@ -332,8 +332,6 @@ export class PurchaseEntry {
             })
         );
 
-       console.log(this.pDate);
-
         // Details
 
         this.rowData =
@@ -615,9 +613,6 @@ export class PurchaseEntry {
 
             items: this.purchaseItems
         };
-
-        console.log('UPDATE PAYLOAD');
-        console.log(payload);
 
         this.purchaseService
             .UpdatePurchase(payload)

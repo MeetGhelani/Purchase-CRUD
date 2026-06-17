@@ -101,8 +101,6 @@ export class FindDialogComponent
     generateColumns(): void
     {
 
-        console.log('Generate Columns Called');
-        console.log(this.rowData);
         if (
             !this.rowData ||
             this.rowData.length === 0
@@ -192,8 +190,6 @@ export class FindDialogComponent
 
                 next: (response) =>
                 {
-                    console.log(response);
-
                     this.rowData = [...response];
 
                     this.cdr.detectChanges();
