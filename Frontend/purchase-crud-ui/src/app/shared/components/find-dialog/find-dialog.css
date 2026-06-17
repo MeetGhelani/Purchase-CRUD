@@ -112,7 +112,7 @@
 
     border: none;
 
-    font-size: 18px;
+    font-size: 15px;
 
     cursor: pointer;
 }
@@ -122,6 +122,8 @@
     background: rgb(73, 0, 0);
 
     color: rgb(255, 98, 98);
+
+    transition: all 0.3s ease-in-out;
 
 }
 
