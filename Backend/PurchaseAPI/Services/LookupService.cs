@@ -16,9 +16,7 @@ namespace PurchaseAPI.Services
             return _lookupRepository.GetLookupData(tableName);
         }
 
-        public List<Dictionary<string, object>>
-            SearchLookup(
-                LookupSearchDTO search)
+        public List<Dictionary<string, object>>SearchLookup(LookupSearchDTO search)
         {
             return _lookupRepository
                 .SearchLookup(search);

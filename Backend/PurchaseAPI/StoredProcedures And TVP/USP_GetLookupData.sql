@@ -8,6 +8,7 @@ BEGIN
             InwardNo,
             ChalanNo,
             PartyName,
+            PurchaseBy,
             PDate
         FROM PurchaseMaster
         ORDER BY InwardNo DESC

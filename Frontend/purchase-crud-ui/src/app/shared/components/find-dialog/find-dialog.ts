@@ -4,7 +4,7 @@ import {
   Component,
   Input,
   Output,
-  EventEmitter
+  EventEmitter,
 } from '@angular/core';
 
 import {AgGridAngular} from 'ag-grid-angular';
@@ -14,42 +14,68 @@ import {
   ModuleRegistry,
   AllCommunityModule
 } from 'ag-grid-community';
+
+
 import { LookupService } from '../../../services/lookupService';
 
 import {ChangeDetectorRef} from '@angular/core';
+
+import { Subject } from 'rxjs';
+import {
+    debounceTime,
+    distinctUntilChanged
+} from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-find-dialog',
   standalone: true,
-  imports: [AgGridAngular, FormsModule],
+  imports: [AgGridAngular, FormsModule, CommonModule],
   templateUrl: './find-dialog.html',
   styleUrl: './find-dialog.css'
 })
 export class FindDialogComponent 
-{
+{    
     constructor(private lookupService: LookupService, private cdr: ChangeDetectorRef) {
     }
 
-  searchTerm: string = '';
+    private searchSubject = new Subject<{ tableName: string, filters: any }>();
+
   rowData: any[] = [];
   columnDefs: ColDef[] = [];
+  searchFilters: any = {};
 
-    defaultColDef: ColDef =
+    ngOnInit()
     {
+        this.loadData();
+
+        this.searchSubject
+            .pipe(
+                debounceTime(500)
+            )
+            .subscribe(filters =>
+            {
+                this.performSearch(
+                    filters
+                );
+            });
+    }
+
+    defaultColDef: ColDef = {
         flex: 1,
+
+        minWidth: 120,
+
+        sortable: true,
+
         resizable: true
     };
-
-  ngOnInit() {
-    this.loadData();
-  }
   
     loadData(): void
     {
 
-        console.log("Table Name:", this.tableName);
         this.lookupService
             .getLookupData(
                 this.tableName)
@@ -74,6 +100,9 @@ export class FindDialogComponent
 
     generateColumns(): void
     {
+
+        console.log('Generate Columns Called');
+        console.log(this.rowData);
         if (
             !this.rowData ||
             this.rowData.length === 0
@@ -96,13 +125,24 @@ export class FindDialogComponent
                     .replace(/([A-Z])/g, ' $1')
                     .trim(),
 
-                sortable: true,
+            valueFormatter:
+                column.toLowerCase().includes('date')
+                ? (params: any) =>
+                {
+                    if (!params.value)
+                    {
+                        return '';
+                    }
 
-                filter: true,
+                    return new Date(
+                        params.value
+                    )
+                    .toLocaleDateString(
+                        'en-GB'
+                    );
+                }
+                : undefined
 
-                floatingFilter: true,
-
-                resizable: true
             }));
     }
 
@@ -140,35 +180,64 @@ export class FindDialogComponent
         this.close();
     }
 
-    onFilterChanged(event: any): void
+    performSearch(
+        filters: any): void
     {
-        const filterModel =
-            event.api.getFilterModel();
-
-        const filters: any = {};
-
-        Object.keys(filterModel)
-            .forEach(key =>
-            {
-                filters[key] =
-                    filterModel[key]
-                    .filter;
-            });
-
-        console.log(filters);
-
         this.lookupService
             .searchLookup(
                 this.tableName,
                 filters
             )
             .subscribe({
+
                 next: (response) =>
                 {
-                    this.rowData =
-                        response;
+                    console.log(response);
+
+                    this.rowData = [...response];
+
+                    this.cdr.detectChanges();
+                },
+
+                error: (error) =>
+                {
+                    console.error(
+                        error
+                    );
                 }
             });
+    }
+
+    onSearchChanged(): void
+    {
+        const filters: any = {};
+
+        Object.keys(this.searchFilters)
+            .forEach(key =>
+            {
+                const value =
+                    this.searchFilters[key];
+
+                if (
+                    value &&
+                    value.toString().trim()
+                )
+                {
+                    filters[key] =
+                        value.toString();
+                }
+            });
+
+        if (Object.keys(filters).length === 0)
+        {
+            this.loadData();
+
+            return;
+        }
+
+        this.searchSubject.next(
+            filters
+        );
     }
 
 }

@@ -1,5 +1,5 @@
-@import "ag-grid-community/styles/ag-grid.css";
-@import "ag-grid-community/styles/ag-theme-alpine.css";
+@import 'ag-grid-community/styles/ag-theme-alpine.css';
+
 
 .overlay
 {
@@ -55,23 +55,45 @@
 
 .dialog-body
 {
-    padding: 15px;
+    flex: 1;
 }
 
 
+
+.search-row
+{
+    display: flex;
+
+    gap: 10px;
+
+    padding: 15px 15px 0px 15px;
+
+    overflow-x: auto;
+}
+
 .search-input
 {
-    padding: 8px;
+    min-width: 180px;
 
-    border: 1px solid #b6b6b6;
+    height: 38px;
 
-    border-radius: 4px;
+    padding: 0 12px;
 
-    font-weight: bold;
+    border: 1px solid #d1d5db;
 
-    color: rgb(0, 75, 56);
+    border-radius: 8px;
 
-    width: 50%;
+    outline: none;
+
+    transition: all 0.2s ease;
+}
+
+.search-input:focus
+{
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37,99,235,0.15);
 }
 
 .close-button
@@ -101,4 +123,99 @@
 
     color: rgb(255, 98, 98);
 
+}
+
+.grid-container
+{
+
+    flex: 1;
+    padding: 15px;
+
+}
+
+.ag-theme-alpine
+{
+    height: 100%;
+
+    width: 100%;
+
+    --ag-font-size: 13px;
+
+    --ag-font-family: Inter, Segoe UI, sans-serif;
+
+    --ag-row-height: 42px;
+
+    --ag-header-height: 46px;
+
+    --ag-border-color: #000c24;
+
+    --ag-header-background-color: #cdf3ff;
+
+    --ag-header-foreground-color: #000b24;
+
+    --ag-foreground-color: #28313f;
+
+    --ag-background-color: #ffffff;
+
+    --ag-row-hover-color: rgba(0, 72, 85, 0.144);
+
+    --ag-selected-row-background-color:
+        rgba(37,99,235,0.15);
+}
+
+.ag-theme-alpine .ag-row:nth-child(even)
+{
+    background-color: #fafafa;
+}
+
+.ag-theme-alpine .ag-row:hover
+{
+    cursor: pointer;
+}
+
+.ag-theme-alpine .ag-header-cell-label
+{
+    font-weight: 600;
+}
+
+.search-row::-webkit-scrollbar,
+.ag-body-viewport::-webkit-scrollbar
+{
+    height: 8px;
+
+    width: 8px;
+}
+
+.search-row::-webkit-scrollbar-thumb,
+.ag-body-viewport::-webkit-scrollbar-thumb
+{
+    background: #cbd5e1;
+
+    border-radius: 10px;
+}
+
+:host ::ng-deep .lookup-grid .ag-body-vertical-scroll-viewport::-webkit-scrollbar,
+:host ::ng-deep .lookup-grid .ag-body-horizontal-scroll-viewport::-webkit-scrollbar
+{
+    width: 10px;
+    height: 10px;
+}
+
+:host ::ng-deep .lookup-grid .ag-body-vertical-scroll-viewport::-webkit-scrollbar-track,
+:host ::ng-deep .lookup-grid .ag-body-horizontal-scroll-viewport::-webkit-scrollbar-track
+{
+    background: #f1f5f9;
+}
+
+:host ::ng-deep .lookup-grid .ag-body-vertical-scroll-viewport::-webkit-scrollbar-thumb,
+:host ::ng-deep .lookup-grid .ag-body-horizontal-scroll-viewport::-webkit-scrollbar-thumb
+{
+    background: #64748b;
+    border-radius: 999px;
+}
+
+:host ::ng-deep .lookup-grid .ag-body-vertical-scroll-viewport::-webkit-scrollbar-thumb:hover,
+:host ::ng-deep .lookup-grid .ag-body-horizontal-scroll-viewport::-webkit-scrollbar-thumb:hover
+{
+    background: #475569;
 }

@@ -48,129 +48,106 @@ namespace PurchaseAPI.Repositories
 
         public List<Dictionary<string, object>> SearchLookup(LookupSearchDTO search)
         {
+            Console.WriteLine("SearchLookup called with TableName: " + search.TableName);
+
             List<Dictionary<string, object>>
                 rows = new();
 
-            using SqlConnection connection =
-                new SqlConnection(
-                    _connection);
+            string whereClause = "";
 
             //----------------------------------
-            // Validate Table Name
-            //----------------------------------
-
-            List<string> allowedTables =
-            [
-                "PurchaseMaster",
-                "PurchaseDetail"
-            ];
-
-            if (!allowedTables.Contains(
-                    search.TableName))
-            {
-                throw new Exception(
-                    "Invalid Table Name");
-            }
-
-            //----------------------------------
-            // Build Query
-            //----------------------------------
-
-            string sql =
-                $@"
-                SELECT TOP 100 *
-                FROM {search.TableName}
-                WHERE 1 = 1
-                ";
-
-            SqlCommand command =
-                new SqlCommand();
-
-            int parameterIndex = 0;
-
-            //----------------------------------
-            // Filters
+            // Build WHERE Clause
             //----------------------------------
 
             foreach (var filter
                 in search.Filters)
             {
-                if (string.IsNullOrWhiteSpace(
+                if (
+                    string.IsNullOrWhiteSpace(
                         filter.Value))
                 {
                     continue;
                 }
 
-                string parameterName =
-                    "@P" + parameterIndex;
-
-                sql +=
-                    $" AND {filter.Key} LIKE {parameterName}";
-
-                command.Parameters.AddWithValue(
-                    parameterName,
-                    "%" + filter.Value + "%");
-
-                parameterIndex++;
+                whereClause +=
+                    $" AND CAST({filter.Key} AS VARCHAR(100)) LIKE '%{filter.Value}%'";
             }
 
             //----------------------------------
-            // Sort
+            // Determine Sort Column
             //----------------------------------
 
-            if (search.TableName ==
-                "PurchaseMaster")
-            {
-                sql +=
-                    " ORDER BY InwardNo DESC";
-            }
-            else
-            {
-                sql +=
-                    " ORDER BY InwardNo DESC";
-            }
-
-            command.CommandText =
-                sql;
-
-            command.Connection =
-                connection;
+            string orderColumn =
+                GetOrderColumn(
+                    search.TableName);
 
             //----------------------------------
-            // Execute
+            // Execute SP
             //----------------------------------
 
-            connection.Open();
+            using SqlConnection connection =
+                new SqlConnection(
+                    _connection);
 
-            using SqlDataAdapter adapter =
-                new SqlDataAdapter(command);
+            using SqlCommand command =
+                new SqlCommand(
+                    "USP_SearchLookup",
+                    connection);
+
+            command.CommandType =
+                CommandType.StoredProcedure;
+
+            command.Parameters.AddWithValue(
+                "@TableName",
+                search.TableName);
+
+            command.Parameters.AddWithValue(
+                "@WhereClause",
+                whereClause);
+
+            command.Parameters.AddWithValue(
+                "@OrderColumn",
+                orderColumn);
 
             DataTable dt =
                 new DataTable();
 
+            using SqlDataAdapter adapter =
+                new SqlDataAdapter(command);
+
             adapter.Fill(dt);
 
-            //----------------------------------
-            // Convert To List
-            //----------------------------------
+            // Convert DataTable To List
 
-            foreach (DataRow row
-                in dt.Rows)
+            foreach (DataRow row in dt.Rows)
             {
                 Dictionary<string, object>
                     item = new();
 
-                foreach (DataColumn column
+                foreach (
+                    DataColumn column
                     in dt.Columns)
                 {
-                    item[column.ColumnName] =
-                        row[column];
+                    item[column.ColumnName]
+                        = row[column];
                 }
 
                 rows.Add(item);
             }
 
             return rows;
+        }
+
+        private string GetOrderColumn(string tableName)
+        {
+            switch (tableName)
+            {
+                case "PurchaseMaster":
+                    return "InwardNo";
+
+                default:
+                    return "ID";
+            }
         }
     }
 }

@@ -30,9 +30,7 @@ namespace PurchaseAPI.Controllers
         }
 
         [HttpPost("search")]
-        public IActionResult SearchLookup(
-            [FromBody]
-            LookupSearchDTO search)
+        public IActionResult SearchLookup([FromBody]LookupSearchDTO search)
         {
             return Ok(
                 _lookupService

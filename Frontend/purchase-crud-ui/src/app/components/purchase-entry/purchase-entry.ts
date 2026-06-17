@@ -290,9 +290,7 @@ export class PurchaseEntry {
             purchase.purchaseMaster.chalanNo;
 
         this.pDate =
-            new Date(
-                purchase.purchaseMaster.pDate
-            ).toISOString().split('T')[0];
+                purchase.purchaseMaster.pDate.split('T')[0];
 
         this.partyName =
             purchase.purchaseMaster.partyName;
@@ -333,6 +331,8 @@ export class PurchaseEntry {
                 Remarks: x.remarks
             })
         );
+
+       console.log(this.pDate);
 
         // Details
 
@@ -661,6 +661,9 @@ export class PurchaseEntry {
         this.rowData = [];
 
         this.clearDetailForm();
+        this.loadNextInwardNo();
+
+        this.isEditPurchaseMode = false;
     }
 
     loadNextInwardNo(): void

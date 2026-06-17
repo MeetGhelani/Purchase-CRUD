@@ -2,11 +2,19 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environment/environment';
 
+import { Subject } from 'rxjs';
+import {
+    debounceTime,
+    distinctUntilChanged
+} from 'rxjs/operators';
+
+
 @Injectable({
   providedIn: 'root'
 })
 export class LookupService
 {
+    
     private apiUrl =
         environment.apiBaseUrllookup;
 
@@ -23,13 +31,12 @@ export class LookupService
         );
     }
 
-    searchLookup(
-        tableName: string,
-        filters: any)
+    searchLookup(tableName: string, filters: any)
     {
         return this.http.post<any[]>(
-            `${this.apiUrl}/${tableName}/search`,
-            filters
-        );
+            `${this.apiUrl}/search`,{
+                tableName,
+                filters
+            });
     }
 }
