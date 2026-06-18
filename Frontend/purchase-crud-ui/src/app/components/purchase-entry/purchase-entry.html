@@ -241,14 +241,14 @@
         </div>
 
         <div class="final-button-row">
-            <button (click)="savePurchase()">
+            <button (click)="UpdateConfirmDialog()">
                             {{ isEditPurchaseMode
                                 ? 'Update'
                                 : 'Save Purchase' }}
             </button>
             <button (click)="openFindDialog()">Find Form</button>
             <button (click)="resetPurchaseScreen()">Clear Form</button>
-            <button (click)="deletePurchase()"
+            <button (click)="DeleteConfirmDialog()"
             [disabled]="!isEditPurchaseMode"
             class="btn-danger"
             >Delete
@@ -269,5 +269,24 @@
 
         (dialogClosed)="closeFindDialog()">
 
-        </app-find-dialog>
+    </app-find-dialog>
+}
+
+@if(showConfirmDialog)
+{
+    <app-confirm-dialog
+
+        [title]="title"
+
+        [message]="message"
+
+        [confirmText]="confirmText"
+
+        [cancelText]="cancelText"
+
+        (confirmClick)="confirmOptions()"
+
+        (cancelClick)="showConfirmDialog = false">
+
+    </app-confirm-dialog>
 }

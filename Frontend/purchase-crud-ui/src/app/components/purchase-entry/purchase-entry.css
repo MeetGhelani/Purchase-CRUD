@@ -432,6 +432,13 @@
     background: #8a0d0d !important;
 }
 
+.btn-danger:disabled
+{
+    background: #fca5a5 !important;
+    color: #FFFFFF;
+    cursor: not-allowed !important; 
+}
+
 /* ========================================
    NUMBER INPUT ARROWS REMOVE
 ======================================== */

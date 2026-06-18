@@ -169,15 +169,6 @@ export class FindDialogComponent
     dialogClosed =
         new EventEmitter<void>();
 
-    selectRow(row: any): void
-    {
-        this.rowSelected.emit(row);
-    }
-
-    close(): void
-    {
-        this.dialogClosed.emit();
-    }
 
     onRowDoubleClick(event: any): void
     {
@@ -186,6 +177,11 @@ export class FindDialogComponent
         );
 
         this.close();
+    }
+
+    close(): void
+    {
+        this.dialogClosed.emit();
     }
 
     performSearch(

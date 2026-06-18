@@ -17,6 +17,8 @@ import { PurchaseCreateModel } from '../../models/purchase.create.model';
 
 import{FindDialogComponent} from '../../shared/components/find-dialog/find-dialog';
 
+import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
+
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -24,7 +26,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-purchase-entry',
   standalone: true,
-  imports: [AgGridAngular, FormsModule, FindDialogComponent],
+  imports: [AgGridAngular, FormsModule, FindDialogComponent, ConfirmDialog],
   templateUrl: './purchase-entry.html',
   styleUrl: './purchase-entry.css',
 })
@@ -64,6 +66,13 @@ export class PurchaseEntry {
   showFindDialog: boolean = false;
   isEditPurchaseMode: boolean = false;
 
+  showConfirmDialog: boolean = false;
+    title: string = '';
+    message: string = '';
+    confirmText: string = 'Confirm';
+    cancelText: string = 'Cancel';
+    iwantToDelete: boolean = false;
+    iwantToUpdate: boolean = false;
 
   constructor(
     private purchaseService: PurchaseService,
@@ -96,6 +105,48 @@ export class PurchaseEntry {
     {
         this.showFindDialog = false;
     }
+
+    openConfirmDialog(title: string, message: string, confirmText: string, cancelText: string): void{
+        this.title = title;
+        this.message = message;
+        this.confirmText = confirmText;
+        this.cancelText = cancelText;   
+        this.showConfirmDialog = true;
+    }
+
+    DeleteConfirmDialog(): void
+    {
+        this.openConfirmDialog('Confirm Delete Purchase Entry', `Do you want to delete this Inward No. : "${this.nextInwardNo}" Purchase Entry?`, 'Delete Purchase', 'Cancel');
+        this.iwantToDelete = true;
+    }
+
+    UpdateConfirmDialog(): void
+    {
+        this.openConfirmDialog('Confirm Update Purchase Entry', `Do you want to update this Inward No. : "${this.nextInwardNo}" Purchase Entry?`, 'Update Purchase', 'Cancel');
+        this.iwantToUpdate = true;
+    }
+
+    confirmOptions(): void
+    {
+        if(this.iwantToDelete)
+        {
+            this.showConfirmDialog = false;
+            this.iwantToDelete = false;
+            this.deletePurchase();
+        }
+
+        else if(this.iwantToUpdate)
+        {
+            this.showConfirmDialog = false;
+            this.iwantToUpdate = false;
+            this.savePurchase();
+        }
+
+        else{
+            this.showConfirmDialog = false;
+        }
+    }
+
 
     allowThreeDecimals(event: KeyboardEvent): void
     {
@@ -682,21 +733,6 @@ export class PurchaseEntry {
 
     deletePurchase(): void
     {
-        if (!this.isEditPurchaseMode)
-        {
-            return;
-        }
-
-        const confirmed =
-            confirm(
-                `Do you want to delete Purchase Entry with Inward No. "${this.nextInwardNo}"?`
-            );
-
-        if (!confirmed)
-        {
-            return;
-        }
-
         this.purchaseService
             .DeletePurchase(
                 this.nextInwardNo
