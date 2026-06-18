@@ -18,26 +18,6 @@
 
         <div class="dialog-body">
 
-            <!-- Search Row -->
-
-            <div class="search-row">
-
-                <input
-
-                    *ngFor="let col of columnDefs"
-
-                    type="text"
-
-                    class="search-input"
-
-                    [placeholder]="'🔍 Search by ' + col.headerName"
-
-                    [(ngModel)]="searchFilters[col.field!]"
-
-                    (input)="onSearchChanged()">
-
-            </div>
-
             <!-- Grid -->
 
             <div class="grid-container ag-theme-alpine lookup-grid">
@@ -53,6 +33,8 @@
                     [defaultColDef]="defaultColDef"
 
                     [pagination]="true"
+
+                    (filterChanged)="onFilterChanged($event)"
 
                     (rowDoubleClicked)="onRowDoubleClick($event)">
 

@@ -1,0 +1,14 @@
+.filter-input
+{
+    width: 100%;
+
+    height: 28px;
+
+    border: none;
+
+    outline: none;
+
+    padding: 0 8px;
+
+    font-size: 12px;
+}

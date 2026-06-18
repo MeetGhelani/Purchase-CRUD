@@ -48,7 +48,6 @@ namespace PurchaseAPI.Repositories
 
         public List<Dictionary<string, object>> SearchLookup(LookupSearchDTO search)
         {
-            Console.WriteLine("SearchLookup called with TableName: " + search.TableName);
 
             List<Dictionary<string, object>>
                 rows = new();

@@ -25,14 +25,16 @@ import {
     debounceTime,
     distinctUntilChanged
 } from 'rxjs/operators';
-import { CommonModule } from '@angular/common';
+
+import { LookupServerFilterComponent } from '../lookup-server-filter/lookup-server-filter';
+import { LookupFloatingFilterComponent } from '../lookup-floating-filter/lookup-floating-filter';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-find-dialog',
   standalone: true,
-  imports: [AgGridAngular, FormsModule, CommonModule],
+  imports: [AgGridAngular, FormsModule ],
   templateUrl: './find-dialog.html',
   styleUrl: './find-dialog.css'
 })
@@ -45,7 +47,6 @@ export class FindDialogComponent
 
   rowData: any[] = [];
   columnDefs: ColDef[] = [];
-  searchFilters: any = {};
 
     ngOnInit()
     {
@@ -67,6 +68,8 @@ export class FindDialogComponent
         flex: 1,
 
         minWidth: 120,
+
+        filter:true,
 
         sortable: true,
 
@@ -122,6 +125,10 @@ export class FindDialogComponent
                     column
                     .replace(/([A-Z])/g, ' $1')
                     .trim(),
+
+                        filter: LookupServerFilterComponent,
+                        floatingFilter: true,
+                        floatingFilterComponent:LookupFloatingFilterComponent,
 
             valueFormatter:
                 column.toLowerCase().includes('date')
@@ -204,15 +211,17 @@ export class FindDialogComponent
             });
     }
 
-    onSearchChanged(): void
+    onFilterChanged(event: any): void
     {
+        const filterModel = event.api.getFilterModel();
+
         const filters: any = {};
 
-        Object.keys(this.searchFilters)
+        Object.keys(filterModel)
             .forEach(key =>
             {
                 const value =
-                    this.searchFilters[key];
+                    filterModel[key]?.value;
 
                 if (
                     value &&
@@ -224,10 +233,11 @@ export class FindDialogComponent
                 }
             });
 
-        if (Object.keys(filters).length === 0)
+        if (
+            Object.keys(filters).length === 0
+        )
         {
             this.loadData();
-
             return;
         }
 
