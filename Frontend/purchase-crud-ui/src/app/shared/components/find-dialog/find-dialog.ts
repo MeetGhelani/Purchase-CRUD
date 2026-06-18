@@ -5,6 +5,7 @@ import {
   Input,
   Output,
   EventEmitter,
+  HostListener,
 } from '@angular/core';
 
 import {AgGridAngular} from 'ag-grid-angular';
@@ -76,6 +77,7 @@ export class FindDialogComponent
 
         resizable: true
     };
+
   
     loadData(): void
     {
@@ -244,6 +246,18 @@ export class FindDialogComponent
         this.searchSubject.next(
             filters
         );
+    }   
+
+    //------------------- Keyboard Shortcuts ------------------//
+    
+    @HostListener('document:keydown', ['$event'])
+    onKeydown(event: KeyboardEvent): void
+    {
+        if (event.key === 'Escape')
+        {
+            this.close();
+        }
+
     }
 
 }

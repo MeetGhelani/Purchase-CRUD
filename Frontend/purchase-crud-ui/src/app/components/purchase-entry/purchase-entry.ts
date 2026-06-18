@@ -346,11 +346,7 @@ export class PurchaseEntry {
             false;
     }
 
-  @HostListener('document:keydown.delete')
-  onDeleteKeyPressed(): void
-  {
-      this.deleteSelectedRow();
-  }
+
 
   deleteSelectedRow(): void
   {
@@ -734,6 +730,31 @@ export class PurchaseEntry {
                 }
             });
     }
+
+
+        // ========================================
+        // Keyboard Shortcuts
+        // ========================================
+
+        @HostListener('document:keydown', ['$event'])
+        onKeydown(event: KeyboardEvent): void
+        {
+            if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'f')
+            {
+                this.openFindDialog();
+            }
+
+            if(event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 's')
+            {
+                this.savePurchase();
+            }
+
+            if(event.key === 'Delete')
+            {
+                this.deletePurchase();
+            }
+
+        }
 
 
 }
