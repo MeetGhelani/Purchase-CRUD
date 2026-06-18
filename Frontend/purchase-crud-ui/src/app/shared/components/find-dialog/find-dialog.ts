@@ -65,7 +65,8 @@ export class FindDialogComponent
     }
 
     defaultColDef: ColDef = {
-        flex: 1,
+
+        width: 180,
 
         minWidth: 120,
 
@@ -233,11 +234,10 @@ export class FindDialogComponent
                 }
             });
 
-        if (
-            Object.keys(filters).length === 0
-        )
+        if (Object.keys(filters).length === 0)
         {
             this.loadData();
+            this.cdr.detectChanges();
             return;
         }
 
