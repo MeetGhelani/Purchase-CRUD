@@ -247,20 +247,6 @@
                                 : 'Save Purchase' }}
             </button>
             <button (click)="openFindDialog()">Find Form</button>
-            @if(showFindDialog)
-            {
-                <app-find-dialog
-
-                    title="Find Purchase Entry"
-
-                    [tableName]="'PurchaseMaster'"
-
-                    (rowSelected)="onPurchaseSelected($event)"
-
-                    (dialogClosed)="closeFindDialog()">
-
-                </app-find-dialog>
-            }
             <button (click)="resetPurchaseScreen()">Clear Form</button>
             <button (click)="deletePurchase()"
             [disabled]="!isEditPurchaseMode"
@@ -270,3 +256,18 @@
         </div>
 
 </div>
+
+@if(showFindDialog)
+{
+    <app-find-dialog
+
+        title="Find Purchase Entry"
+
+        [tableName]="'PurchaseMaster'"
+
+        (rowSelected)="onPurchaseSelected($event)"
+
+        (dialogClosed)="closeFindDialog()">
+
+        </app-find-dialog>
+}
