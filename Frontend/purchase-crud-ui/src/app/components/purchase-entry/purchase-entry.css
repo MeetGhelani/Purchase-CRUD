@@ -1,3 +1,14 @@
+:root {
+    --primary-color: #1E40AF;
+    --secondary-color: #2563EB;
+    --danger-color: #DC2626;
+    --success-color: #16A34A;
+    --warning-color: #F59E0B;
+    --info-color: #3B82F6;
+    --light-color: #F3F4F6;
+    --dark-color: #111844;
+}
+
 *{
     margin: 0;
     padding: 0;
@@ -36,6 +47,12 @@
     padding: 10px 20px;
 
     font-weight: 600;
+}
+
+.purchase-form-title::before
+{
+    content: "🛒";
+    margin-right: 10px;
 }
 
 /* ========================================

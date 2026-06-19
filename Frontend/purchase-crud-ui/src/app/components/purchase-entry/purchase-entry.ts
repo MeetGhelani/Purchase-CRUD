@@ -72,7 +72,6 @@ export class PurchaseEntry {
     confirmText: string = 'Confirm';
     cancelText: string = 'Cancel';
     iwantToDelete: boolean = false;
-    iwantToUpdate: boolean = false;
 
   constructor(
     private purchaseService: PurchaseService,
@@ -120,12 +119,6 @@ export class PurchaseEntry {
         this.iwantToDelete = true;
     }
 
-    UpdateConfirmDialog(): void
-    {
-        this.openConfirmDialog('Confirm Update Purchase Entry', `Do you want to update this Inward No. : "${this.nextInwardNo}" Purchase Entry?`, 'Update Purchase', 'Cancel');
-        this.iwantToUpdate = true;
-    }
-
     confirmOptions(): void
     {
         if(this.iwantToDelete)
@@ -133,13 +126,6 @@ export class PurchaseEntry {
             this.showConfirmDialog = false;
             this.iwantToDelete = false;
             this.deletePurchase();
-        }
-
-        else if(this.iwantToUpdate)
-        {
-            this.showConfirmDialog = false;
-            this.iwantToUpdate = false;
-            this.savePurchase();
         }
 
         else{
@@ -406,7 +392,7 @@ export class PurchaseEntry {
           alert('Please select a row to delete');
           return;
       }
-
+      
       this.purchaseItems.splice(
           this.editingRowIndex,
           1
